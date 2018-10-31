@@ -10,7 +10,7 @@ random_device seed;
 mt19937 mt(seed()); 
 normal_distribution<> dist(0., 1.);
 
-static const int n = 20;
+static const int n = 100;
 static const double upper_limit = 5.12;
 static const double lower_limit = -5.12;
 
@@ -106,7 +106,8 @@ int main(){
         
         if(((int)(count_evaluate / lambda) % (int)(n / 10)) < 1.){
             C = upper_triangle(C) + trans(upper_triangle(C, 1));
-            diagonalization(C, B, D);
+            // diagonalization(C, B, D);
+            jacobi(C, B, D);
             if(D.back().back() > 1e14 * D.front().front()){
                 long long tmp = (D.back().back() / 1e14) - D.front().front();
                 C += tmp * identity(n);
