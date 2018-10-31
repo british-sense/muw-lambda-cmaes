@@ -22,5 +22,7 @@ http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf
 |benchmark|rastrigin|
 
 実験結果
+
 ![rastrigin1](https://github.com/ko-cha/CMA-ES/blob/master/img/image002.png "rastrigin1")
+
 ![rastrigin2](https://github.com/ko-cha/CMA-ES/blob/master/img/image004.png "rastrigin2")
