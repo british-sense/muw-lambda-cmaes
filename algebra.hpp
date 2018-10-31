@@ -6,6 +6,14 @@
 #include <vector>
 #include <algorithm>
 
+std::vector<double> operator+(const std::vector<double> &vec1, const double &value);
+std::vector<double> operator+(const double &value, const std::vector<double> &vec1);
+std::vector<double> operator+(const std::vector<double> &vec1, const std::vector<double> &vec2);
+std::vector<std::vector<double> > operator+(const std::vector<std::vector<double> > &mat1, const std::vector<std::vector<double> > &mat2);
+std::vector<std::vector<double> > operator+(const double &value, const std::vector<std::vector<double> > &mat1);
+
+void output(const std::vector<std::vector<double> > &A);
+
 std::vector<double> operator+(const std::vector<double> &vec1, const double &value){
     int size = vec1.size();
     std::vector<double> vec(size, 0.);
@@ -351,6 +359,51 @@ std::vector<std::vector<double> > trans(const std::vector<std::vector<double> > 
     return At;
 }
 
+void abs(std::vector<std::vector<double> > &A){
+    int row = A.size();
+    int col = A.front().size();
+    for(int i = 0; i < row; i++){
+        for(int j = 0; j < col; j++){
+            A[i][j] = std::fabs(A[i][j]);
+        }
+    }
+}
+
+void diag_zero(std::vector<std::vector<double> > &A){
+    int n = A.size();
+    for(int i = 0; i < n; i++){
+        A[i][i] = 0;
+    }
+}
+
+double non_diag_abs_max_value(const std::vector<std::vector<double> > &A){
+    int n = A.size();
+    double max = -1e8;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(max < std::fabs(A[i][j]) && i != j){
+                max = std::fabs(A[i][j]);
+            }
+        }
+    }
+    return max;
+}
+
+std::pair<int, int> non_diag_abs_max_index(const std::vector<std::vector<double> > &A){
+    int n = A.size();
+    double max = -1e8;
+    int p, q;
+    for(int i = 0; i < n; i++){
+        for(int j = 0; j < n; j++){
+            if(max < std::fabs(A[i][j]) && i != j){
+                max = std::fabs(A[i][j]);
+                p = i, q = j;
+            }
+        }
+    }
+    return std::make_pair(p, q);
+}
+
 std::vector<std::vector<double> > inverse(const std::vector<std::vector<double> > &mat){
 
     const int n = mat.size();
@@ -576,7 +629,7 @@ void diagonalization(const std::vector<std::vector<double> > &mat, std::vector<s
     
     const int n = mat.size();
     std::vector<double> lambda = eigen_values(mat);
-    D = diagonalization_matrix(lambda);
+    D = diagonalization_matrix(lambda); 
     if(lambda == diagonalization_component(mat)){
         V = identity(n);
     }else{
@@ -584,6 +637,62 @@ void diagonalization(const std::vector<std::vector<double> > &mat, std::vector<s
             std::vector<double> ev = eigen_vector(mat, lambda[i]);
             for(int j = 0; j < n; j++) V[j][i] = ev[j];
         }
+    }
+}
+
+double similar_trans(std::vector<std::vector<double> > &A, const std::pair<int, int> &index){
+
+    double eps = 1e-8;
+    double phi = 0.;
+    int p = index.first, q = index.second;
+    double App = A[p][p], Apq = A[p][q], Aqq = A[q][q];
+
+    if(std::fabs(App - Aqq) < eps){
+        phi = M_PI / 4.;
+    }else{
+        phi = 0.5 * std::atan((2. * Apq) / (App - Aqq));
+    }
+
+    double cos = std::cos(phi), sin = std::sin(phi), coscos = cos * cos, sinsin = sin * sin, sincos = sin * cos;
+
+    A[p][p] = (coscos * App) + (2. * sincos * Apq) + (sinsin * Aqq);
+    A[q][q] = (sinsin * App) - (2. * sincos * Apq) + (coscos * Aqq);
+    A[p][q] = 0.;
+    A[q][p] = 0.;
+
+    for(int i = 0; i < A.size(); i++){
+        if(i != p && i != q){
+            double Api = A[p][i], Aqi = A[q][i];
+            A[i][p] = (cos * Api) + (sin * Aqi);
+            A[p][i] = A[i][p];
+            A[i][q] = (cos * Aqi) - (sin * Api);
+            A[q][i] = A[i][q];
+        }
+    }
+
+    return phi;
+}
+
+void givens_rot(std::vector<std::vector<double> > &G, const std::pair<int, int> &index, const double &phi){
+
+    int p = index.first, q = index.second;
+
+    for(int i = 0; i < G.size(); i++){
+        double Gpi = G[p][i], Gqi = G[q][i];
+        G[i][p] = std::cos(phi) * G[p][i] + std::sin(phi) * G[q][i];
+        G[i][q] = std::cos(phi) * G[q][i] - std::sin(phi) * G[p][i];
+    }
+}
+
+void jacobi(const std::vector<std::vector<double> > &A, std::vector<std::vector<double> > &R, std::vector<std::vector<double> > &D){
+    
+    double eps = 1e-12;
+    D = A;
+    R = identity(R.size());
+    while(non_diag_abs_max_value(D) >= eps){
+        std::pair<int, int> max_index = non_diag_abs_max_index(D);
+        double phi = similar_trans(D, max_index);
+        givens_rot(R, max_index, phi);
     }
 }
 
