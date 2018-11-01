@@ -1,7 +1,7 @@
-# CMA-ES
+# (*μ*<sub>W</sub>, *λ*)-CMA-ES Algorithm
 
 
-C++におけるCMA-ESの実装です.
+C++における(*μ*<sub>W</sub>, *λ*)-CMA-ESの実装です.
 実装したCMA-ESは以下の論文のものです.
 
 
