@@ -26,3 +26,5 @@ http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf
 ![rastrigin1](https://github.com/ko-cha/CMA-ES/blob/master/img/image002.png "rastrigin1")
 
 ![rastrigin2](https://github.com/ko-cha/CMA-ES/blob/master/img/image004.png "rastrigin2")
+
+100次元でのrastriginにおいて最適解を得ることができました.
