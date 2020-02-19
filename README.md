@@ -4,6 +4,9 @@
 C++における(*μ*<sub>W</sub>, *λ*)-CMA-ESの実装です.
 実装したCMA-ESは以下の論文のものです.
 
+This code implements CMA-ES using C++. CMA-ES version is (*μ*<sub>W</sub>, *λ*)-CMA-ES.
+The paper of implemented CMA-ES is below:
+
 
 Completely Derandomized Self-Adaption in Evolution Strategies
 http://www.cmap.polytechnique.fr/~nikolaus.hansen/cmaartic.pdf
